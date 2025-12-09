@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe — Telegram Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Telegram Game API -->
+    <script src="https://telegram.org/js/games.js"></script>
+
+    <!-- Шрифт и стили игры -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- Левая часть — игровое поле -->
+    <div class="app-left">
+        <div class="app-header">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                Игра на скидку
+            </div>
+            <h1>Крестики-нолики</h1>
+            <p class="subtitle">Играй и получи промокод!</p>
+        </div>
+
+        <div class="board-wrapper">
+            <div class="status-row">
+                <div class="status-text" id="statusText">Ваш ход</div>
+                <div class="status-pill"><span class="status-dot online"></span> Бот онлайн</div>
+            </div>
+
+            <div class="board" id="board"></div>
+
+            <button class="btn btn-secondary" id="btnNewGame">⟲ Начать сначала</button>
+        </div>
+    </div>
+
+    <!-- Правая часть — промокод -->
+    <div class="app-right">
+        <div class="promo-card">
+
+            <div class="promo-header">
+                <div class="promo-title">Ваш подарок</div>
+                <div class="promo-icon">%</div>
+            </div>
+
+            <p class="promo-text">
+                Победите бота — и получите <b>персональный промокод</b>.
+            </p>
+
+            <div class="promo-code-block" id="promoBlock">
+                <span class="promo-code-label">Промокод:</span>
+                <span class="promo-code-value" id="promoCode">00000</span>
+            </div>
+
+            <div class="result-banner result-win" id="bannerWin">Вы победили! 🎉</div>
+            <div class="result-banner result-lose" id="bannerLose">Увы, бот выиграл 😢</div>
+            <div class="result-banner result-draw" id="bannerDraw">Ничья!</div>
+
+            <button class="btn btn-primary" id="btnPlayAgain">Сыграть ещё раз</button>
+
+            <div class="promo-footer">
+                Результат автоматически отправляется вашему боту.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/game.js"></script>
+
+</body>
+</html>
