@@ -1,7 +1,9 @@
 """
 Telegram Bot for launching the Tic-Tac-Toe game via Telegram Game API.
 
-Команда /start отправляет пользователю GameMessage, открывающий игру.
+Команда /start отправляет пользователю GameMessage,
+а Telegram автоматически откроет игру по URL,
+указанному в BotFather → /mygames → Edit Game → Game URL.
 """
 
 import logging
@@ -9,42 +11,39 @@ from telegram import (
     Update,
     InlineKeyboardMarkup,
     InlineKeyboardButton,
-    KeyboardButton,
     Game,
 )
 from telegram.ext import (
     Application,
     CommandHandler,
+    CallbackQueryHandler,
     ContextTypes,
 )
 
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)
-
 settings = get_settings()
 
-# Название игры в Telegram (GameShortName)
+# ⚠️ ДОЛЖНО СОВПАДАТЬ с GameShortName в BotFather → /mygames
 GAME_SHORT_NAME = "tictactoe"
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Обработчик команды /start.
-    Отправляет Game message.
+    Отправляет Game message с кнопкой "Играть".
+    После нажатия Telegram сам откроет игру по URL в BotFather.
     """
-
     chat_id = update.effective_chat.id
-
     logger.info("Sending game to user %s", chat_id)
 
-    # Inline-кнопка для запуска игры
     keyboard = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton(
                     text="▶️ Играть",
-                    callback_game={},   # важно: пустой объект включает Game API
+                    callback_game={}  # важно: включает Game API
                 )
             ]
         ]
@@ -59,16 +58,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
-    Обработчик callback нажатия кнопки "Играть".
-    Telegram автоматически откроет URL игры, который
-    ты укажешь в BotFather → Edit Game → URL.
+    Этот handler вызывается при нажатии кнопки 'Играть'.
+    Telegram автоматически откроет Game URL.
     """
-
     query = update.callback_query
-    await query.answer()  # обязательный ответ
-
-    # Ничего вручную не отправляем — Telegram сам откроет игру по URL
-    # согласно настройкам в BotFather.
+    logger.info("User pressed PLAY, answering callback...")
+    await query.answer()
 
 
 def create_bot_app() -> Application:
@@ -83,31 +78,26 @@ def create_bot_app() -> Application:
         .build()
     )
 
+    # Основные команды
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("play", start))  # alias
-    application.add_handler(
-        # Game callback handler
-        # кнопка "callback_game" вызывает его
-        CommandHandler("callback", start)
-    )
+    application.add_handler(CommandHandler("play", start))
 
-    # Handler для нажатия кнопки запуск игры
-    application.add_handler(
-        # Это Game Callback, он вызывается автоматически Telegram
-        # при нажатии кнопки, содержащей callback_game={}
-        CommandHandler("game_callback", start)
-    )
+    # Обработка callback_game
+    application.add_handler(CallbackQueryHandler(handle_callback))
 
     return application
 
 
 async def run_bot():
     """
-    Запуск бота.
+    Запуск Telegram-бота.
     Вызывается из main.py.
     """
     app = create_bot_app()
+
     await app.initialize()
     await app.start()
+
+    # Polling — лучше для Game API
     await app.updater.start_polling()
     logger.info("Telegram bot started.")
