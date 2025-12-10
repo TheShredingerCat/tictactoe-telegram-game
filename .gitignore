@@ -1,3 +1,24 @@
-.env
+# Python
 __pycache__/
-.pgdata
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+.env
+.env.*
+
+# SQLite DB (если не хочешь хранить в репо)
+promo.db
+
+# Node / frontend
+node_modules/
+dist/
+build/
+*.log
+
+# VSCode
+.vscode/
+.idea/
+
+# Docker
+*.pid

@@ -1,76 +1,88 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Tic Tac Toe — Telegram Game</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tic Tac Toe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Telegram Game API -->
+    <!-- Telegram Games API -->
     <script src="https://telegram.org/js/games.js"></script>
 
-    <!-- Шрифт и стили игры -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="./src/ui/theme.css" />
+  </head>
 
-<div class="app">
+  <body>
+    <div id="app-root">
 
-    <!-- Левая часть — игровое поле -->
-    <div class="app-left">
-        <div class="app-header">
-            <div class="badge">
-                <span class="badge-dot"></span>
-                Игра на скидку
-            </div>
-            <h1>Крестики-нолики</h1>
-            <p class="subtitle">Играй и получи промокод!</p>
+      <!-- Основной экран игры -->
+      <section id="screen-game" class="screen screen--active">
+        <header class="game-header">
+          <h1 class="game-title">Tic Tac Toe</h1>
+          <p class="game-subtitle">You vs Computer</p>
+        </header>
+
+        <!-- Игровое поле -->
+        <div id="board" class="board">
+          <button class="cell" data-index="0"></button>
+          <button class="cell" data-index="1"></button>
+          <button class="cell" data-index="2"></button>
+
+          <button class="cell" data-index="3"></button>
+          <button class="cell" data-index="4"></button>
+          <button class="cell" data-index="5"></button>
+
+          <button class="cell" data-index="6"></button>
+          <button class="cell" data-index="7"></button>
+          <button class="cell" data-index="8"></button>
         </div>
 
-        <div class="board-wrapper">
-            <div class="status-row">
-                <div class="status-text" id="statusText">Ваш ход</div>
-                <div class="status-pill"><span class="status-dot online"></span> Бот онлайн</div>
-            </div>
+        <div class="game-footer">
+          <p id="status-text" class="status-text">Your move</p>
 
-            <div class="board" id="board"></div>
-
-            <button class="btn btn-secondary" id="btnNewGame">⟲ Начать сначала</button>
+          <button id="btn-reset" class="btn-pill">
+            <img src="./assets/buttons/play_again.png" class="btn-icon" />
+            Play Again
+          </button>
         </div>
-    </div>
+      </section>
 
-    <!-- Правая часть — промокод -->
-    <div class="app-right">
+      <!-- Экран проигрыша -->
+      <section id="screen-lose" class="screen">
+        <div class="lose-card">
+          <h2 class="lose-title">You Lose</h2>
+          <p class="lose-subtitle">Try Again</p>
+
+          <div class="lose-icon">
+            <img src="./assets/sad.png" alt="Sad" />
+          </div>
+
+          <button id="btn-lose-again" class="btn-pill">
+            <img src="./assets/buttons/play_again.png" class="btn-icon" />
+            Play Again
+          </button>
+        </div>
+      </section>
+
+      <!-- Модалка победы -->
+      <div id="promo-modal" class="promo-modal promo-modal--hidden">
         <div class="promo-card">
+          <h2 class="promo-title">You Win</h2>
+          <p class="promo-subtitle">Your promo code</p>
 
-            <div class="promo-header">
-                <div class="promo-title">Ваш подарок</div>
-                <div class="promo-icon">%</div>
-            </div>
+          <div class="promo-code-box">
+            <span id="promo-code">00000</span>
+          </div>
 
-            <p class="promo-text">
-                Победите бота — и получите <b>персональный промокод</b>.
-            </p>
-
-            <div class="promo-code-block" id="promoBlock">
-                <span class="promo-code-label">Промокод:</span>
-                <span class="promo-code-value" id="promoCode">00000</span>
-            </div>
-
-            <div class="result-banner result-win" id="bannerWin">Вы победили! 🎉</div>
-            <div class="result-banner result-lose" id="bannerLose">Увы, бот выиграл 😢</div>
-            <div class="result-banner result-draw" id="bannerDraw">Ничья!</div>
-
-            <button class="btn btn-primary" id="btnPlayAgain">Сыграть ещё раз</button>
-
-            <div class="promo-footer">
-                Результат автоматически отправляется вашему боту.
-            </div>
+          <button id="promo-play-again" class="btn-pill">
+            <img src="./assets/buttons/play_again.png" class="btn-icon" />
+            Play Again
+          </button>
         </div>
+      </div>
+
     </div>
-</div>
 
-<script src="js/game.js"></script>
-
-</body>
+    <!-- Подключение логики игры -->
+    <script type="module" src="./src/index.ts"></script>
+  </body>
 </html>

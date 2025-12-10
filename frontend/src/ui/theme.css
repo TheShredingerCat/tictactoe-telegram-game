@@ -1,0 +1,342 @@
+/* --------------------------------------------
+   ROOT VARIABLES
+--------------------------------------------- */
+
+:root {
+  --bg-gradient: linear-gradient(180deg, #ffeef4, #fbe8f5);
+  --card-gradient: linear-gradient(145deg, #fde7ee, #fbeef6);
+
+  --accent-main: #b26c6a;
+  --accent-secondary: #a06c9f;
+  --text-muted: #b188b5;
+
+  --cell-bg: #fff7fb;
+  --cell-border: #f1d5e5;
+
+  --radius-card: 26px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 16px 40px rgba(225, 157, 177, 0.45),
+                 0 2px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* --------------------------------------------
+   GLOBAL
+--------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg-gradient);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--accent-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app-root {
+  width: min(420px, 100vw);
+  min-height: 100vh;
+  padding: 24px 16px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------
+   SCREENS
+--------------------------------------------- */
+
+.screen {
+  width: 100%;
+}
+.screen--active {}
+.screen--hidden { display: none; }
+
+/* --------------------------------------------
+   GAME HEADER
+--------------------------------------------- */
+
+.game-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--accent-secondary);
+}
+
+.game-subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------
+   GAME BOARD
+--------------------------------------------- */
+
+.board {
+  background: var(--card-gradient);
+  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.cell {
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 20px;
+  background: var(--cell-bg);
+  border: 1px solid var(--cell-border);
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(217,161,183,0.25);
+  transition: transform .08s ease-out, box-shadow .08s ease-out;
+}
+
+.cell:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(217,161,183,0.35);
+}
+
+.cell:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 3px 7px rgba(217,161,183,0.25);
+}
+
+.cell:disabled {
+  cursor: default;
+}
+
+.cell-inner {
+  position: absolute;
+  inset: 18%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.cell-inner--x {
+  background-image: url("../../assets/cross.png");
+}
+
+.cell-inner--o {
+  background-image: url("../../assets/round.png");
+}
+
+/* --------------------------------------------
+   FOOTER
+--------------------------------------------- */
+
+.game-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.status-text {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------
+   BUTTONS (3D PILL)
+--------------------------------------------- */
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 40px;
+  border: none;
+  border-radius: var(--radius-pill);
+
+  background: linear-gradient(145deg, #f8c9c8, #ffd9d7);
+  color: var(--accent-main);
+
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+
+  cursor: pointer;
+  box-shadow:
+    0 8px 18px rgba(223,143,141,0.5),
+    0 2px 0 rgba(255,244,244,0.9);
+
+  transition: transform .08s ease-out,
+              box-shadow .08s ease-out;
+}
+
+.btn-pill:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 20px rgba(223,143,141,0.55),
+    0 2px 0 rgba(255,244,244,1);
+}
+
+.btn-pill:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 5px 10px rgba(223,143,141,0.45),
+    0 1px 0 rgba(255,244,244,0.9);
+}
+
+.btn-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+/* --------------------------------------------
+   LOSE SCREEN
+--------------------------------------------- */
+
+.lose-card {
+  width: 100%;
+  padding: 32px 20px 28px;
+  background: var(--card-gradient);
+  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-card);
+  text-align: center;
+}
+
+.lose-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent-secondary);
+}
+
+.lose-subtitle {
+  margin-top: 4px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.lose-icon img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+/* --------------------------------------------
+   PROMO MODAL
+--------------------------------------------- */
+
+.promo-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(248,231,237, 0.88);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
+  z-index: 100;
+}
+
+.promo-modal--hidden {
+  display: none;
+}
+
+.promo-card {
+  position: relative;
+  width: min(360px, 92vw);
+
+  background: var(--card-gradient);
+  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-card);
+
+  padding: 26px 24px 28px;
+  text-align: center;
+  color: var(--accent-secondary);
+}
+
+/* Декоративные сияния */
+.promo-card::before,
+.promo-card::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  opacity: 0.55;
+  pointer-events: none;
+  filter: blur(.6px);
+}
+
+.promo-card::before {
+  width: 90px;
+  height: 90px;
+  top: -22px;
+  right: -12px;
+  background: radial-gradient(circle at 30% 30%, #ffe6b8 0, transparent 60%);
+}
+
+.promo-card::after {
+  width: 110px;
+  height: 110px;
+  bottom: -30px;
+  left: -10px;
+  background: radial-gradient(circle at 40% 40%, #d9c5ff 0, transparent 65%);
+}
+
+.promo-title {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #8f5c9a;
+}
+
+.promo-subtitle {
+  margin: 0 0 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.promo-code-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 20px;
+  min-width: 200px;
+
+  border-radius: 20px;
+  background: linear-gradient(145deg, #fff9fb, #ffeef3);
+
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,0.9),
+    0 6px 14px rgba(215,153,171,0.4);
+}
+
+#promo-code {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .28em;
+  color: #a86f96;
+}
+
+.btn-promo-play { margin-top: 26px; }
