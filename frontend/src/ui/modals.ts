@@ -1,50 +1,16 @@
-/**
- * Управление модальными окнами (в частности, победным промо-окном)
- */
+import { layout } from "./layout";
 
-const promoModalEl = document.getElementById("promo-modal") as HTMLElement;
-const promoCodeEl = document.getElementById("promo-code") as HTMLElement;
-const promoPlayAgainBtn = document.getElementById(
-  "promo-play-again"
-) as HTMLButtonElement;
+const winCodeEl = document.getElementById("win-code") as HTMLElement;
+const btnWinAgain = document.getElementById("btn-win-again") as HTMLButtonElement;
 
-type PromoModalHandlers = {
-  onPlayAgain?: () => void;
-};
-
-let handlers: PromoModalHandlers = {};
-
-/**
- * Контроллер модалки промокода
- */
-export const promoModal = {
-  /**
-   * Показать модальное окно с промокодом
-   */
+export const winScreen = {
   show(code: string) {
-    promoCodeEl.textContent = code;
-    promoModalEl.classList.remove("promo-modal--hidden");
-  },
-
-  /**
-   * Скрыть окно
-   */
-  hide() {
-    promoModalEl.classList.add("promo-modal--hidden");
-  },
-
-  /**
-   * Установить обработчики внешних событий
-   */
-  setHandlers(newHandlers: PromoModalHandlers) {
-    handlers = newHandlers;
+    winCodeEl.textContent = code;
+    layout.showWinScreen();
   },
 };
 
-/**
- * Кнопка "Play Again" внутри промо-модалки
- */
-promoPlayAgainBtn.addEventListener("click", () => {
-  promoModal.hide();
-  handlers.onPlayAgain?.();
+// Кнопка "Play again"
+btnWinAgain.addEventListener("click", () => {
+  layout.showGameScreen();
 });

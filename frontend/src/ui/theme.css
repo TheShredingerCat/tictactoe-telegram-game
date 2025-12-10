@@ -340,3 +340,7 @@ body {
 }
 
 .btn-promo-play { margin-top: 26px; }
+
+.screen--hidden {
+  display: none !important;
+}
