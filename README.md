@@ -40,34 +40,6 @@ Nginx раздаёт фронтенд, FastAPI работает как API, Tele
 
 ---
 
-# 🧱 Архитектура
-tictactoe-telegram-game/
-├── backend/
-│ ├── app/
-│ │ ├── api/ # REST-эндпоинты
-│ │ ├── bots/ # Telegram Bot (Game API)
-│ │ ├── models/ # SQLAlchemy ORM
-│ │ ├── services/ # Бизнес-логика (promo, security, telegram)
-│ │ ├── db/ # Session, Base, migrations placeholder
-│ │ ├── main.py # Точка входа FastAPI + Bot
-│ │ └── tests/ # Unit-тесты
-│ └── pyproject.toml
-│
-├── frontend/
-│ ├── index.html
-│ ├── assets/ # X/O icons, buttons, promo graphics
-│ ├── src/
-│ │ ├── core/ # gameEngine, botAI, types
-│ │ ├── ui/ # boardView, modals, layout, theme.css
-│ │ ├── telegram/ # integration with Telegram WebApp/GameProxy
-│ │ └── index.ts # фронтовый "дирижёр" проекта
-│
-├── infra/
-│ ├── nginx.conf # Статика + SPA routing
-│ └── env.example
-│
-└── docker-compose.yml
-
 # 🧩 Технологический стек
 
 ### Frontend
