@@ -77,7 +77,9 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info("User pressed PLAY. Saved active_chat_id: %s", active_chat_id)
 
     # Ответ на callback обязателен
-    await query.answer()
+    await query.answer(
+        url="https://habitbattle.ru"   # ваш URL игры
+    )
 
 
 # ---------------------------------------------------------
