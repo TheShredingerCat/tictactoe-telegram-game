@@ -8,6 +8,8 @@ from app.services.telegram_service import TelegramService
 from app.services.security_service import SecurityService
 from app.config import get_settings
 
+from app.bots.game_bot import get_chat_id
+
 
 router = APIRouter()
 
@@ -17,12 +19,8 @@ security_service = SecurityService()
 settings = get_settings()
 
 
-# -----------------------------
-# Pydantic схемы
-# -----------------------------
-
 class GameResultRequest(BaseModel):
-    outcome: str  # "win" | "lose"
+    outcome: str
     telegramUserId: int | None = None
     initData: str | None = None
 
@@ -38,34 +36,20 @@ class GameResultResponse(BaseModel):
     promoCode: str | None = None
 
 
-# -----------------------------
-# Endpoint
-# -----------------------------
-
 @router.post("/game/result", response_model=GameResultResponse)
 async def game_result(
     payload: GameResultRequest,
     db: Session = Depends(get_session),
 ):
     """
-    Принимает результат игры.
-    
-    При победе:
-        1) создаёт промокод
-        2) отправляет сообщение "Победа! Промокод выдан: {код}"
-        3) возвращает промокод на фронт
-
-    При проигрыше:
-        1) отправляет сообщение "Проигрыш"
-        2) promoCode = None
+    Обрабатываем победу/поражение.
     """
 
-    # -----------------------------
-    # Определяем user_id
-    # -----------------------------
+    # -------------------------------
+    # 1. Определяем user_id
+    # -------------------------------
     user_id = None
 
-    # 1) initData через Telegram WebApp/Game API
     if payload.initData:
         try:
             user_id = security_service.validate_init_data(payload.initData)
@@ -75,17 +59,27 @@ async def game_result(
                 detail="Invalid Telegram initData signature"
             )
 
-    # 2) Если initData нет — fallback на telegramUserId
     if user_id is None:
         user_id = payload.telegramUserId or 0
 
-    # -----------------------------
-    # Ветка победы
-    # -----------------------------
+    # -------------------------------
+    # 2. Получаем chat_id бота
+    # -------------------------------
+    chat_id = get_chat_id(user_id)
+
+    if not chat_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot determine chat_id — user must press /start in bot"
+        )
+
+    # -------------------------------
+    # 3. Победа
+    # -------------------------------
     if payload.outcome == "win":
         promo = promo_service.create_promo_code(
             db=db,
-            chat_id=chat_id 
+            chat_id=chat_id
         )
 
         await telegram_service.send_win(
@@ -98,10 +92,10 @@ async def game_result(
             promoCode=promo.code
         )
 
-    # -----------------------------
-    # Ветка проигрыша
-    # -----------------------------
-    await telegram_service.send_lose(chat_id=user_id)
+    # -------------------------------
+    # 4. Проигрыш
+    # -------------------------------
+    await telegram_service.send_lose(chat_id=chat_id)
 
     return GameResultResponse(
         status="ok",
