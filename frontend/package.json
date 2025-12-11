@@ -4,11 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rmdir /S /Q dist && vite build",
     "preview": "vite preview"
   },
-  "dependencies": {},
   "devDependencies": {
+    "rimraf": "^6.1.2",
     "typescript": "^5.3.0",
     "vite": "^5.0.0"
   }
