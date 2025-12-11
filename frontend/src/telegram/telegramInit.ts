@@ -13,25 +13,24 @@ export interface TelegramContext {
   isTelegram: boolean;
 }
 
-function detectUserId(): number | null {
+function detectUserId() {
   try {
-    // Вариант 1: Telegram WebApp API
-    if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-      const user = window.Telegram.WebApp.initDataUnsafe.user;
-      if (user?.id) return user.id;
+    // 1) WebApp API (если вдруг откроется как WebApp)
+    if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
+      return window.Telegram.WebApp.initDataUnsafe.user.id;
     }
 
-    // Вариант 2: Telegram GameProxy API (games.js)
-    if (window.TelegramGameProxy?.initParams?.user) {
-      const user = window.TelegramGameProxy.initParams.user;
-      if (user?.id) return user.id;
+    // 2) Game API (твоя ситуация)
+    if (window.TelegramGameProxy?.initParams?.user?.id) {
+      return window.TelegramGameProxy.initParams.user.id;
     }
-  } catch {
-    // Если браузер или доступ не из Telegram — просто возвращаем null
+  } catch (e) {
+    console.warn("Telegram detection error", e);
   }
 
   return null;
 }
+
 
 const userId = detectUserId();
 
