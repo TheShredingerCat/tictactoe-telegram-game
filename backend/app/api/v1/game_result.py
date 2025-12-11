@@ -83,10 +83,13 @@ async def game_result(
     # Ветка победы
     # -----------------------------
     if payload.outcome == "win":
-        promo = promo_service.create_promo_code(db=db, user_id=user_id)
+        promo = promo_service.create_promo_code(
+            db=db,
+            chat_id=chat_id 
+        )
 
         await telegram_service.send_win(
-            chat_id=user_id,
+            chat_id=chat_id,
             promo_code=promo.code
         )
 
