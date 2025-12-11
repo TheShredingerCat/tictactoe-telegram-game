@@ -1,6 +1,7 @@
 const screenGame = document.getElementById("screen-game") as HTMLElement;
 const screenLose = document.getElementById("screen-lose") as HTMLElement;
 const promoModalEl = document.getElementById("promo-modal") as HTMLElement;
+
 const statusTextEl = document.getElementById("status-text") as HTMLElement;
 
 export const layout = {
