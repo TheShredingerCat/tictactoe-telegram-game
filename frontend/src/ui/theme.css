@@ -60,7 +60,7 @@ body {
 .screen {
   width: 100%;
 }
-.screen--active {}
+
 .screen--hidden { display: none; }
 
 /* --------------------------------------------
