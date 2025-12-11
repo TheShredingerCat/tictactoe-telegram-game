@@ -48,45 +48,46 @@ async def game_result(
     db: Session = Depends(get_session),
 ):
     """
-    Принимает результат игры.
-    
     При победе:
-        1) создаёт промокод
-        2) отправляет сообщение "Победа! Промокод выдан: {код}"
+        1) создаёт промокод (chat_id = user_id = id Telegram-пользователя)
+        2) отправляет сообщение "Победа! Промокод: XXX"
         3) возвращает промокод на фронт
 
-    При проигрыше:
+    При поражении:
         1) отправляет сообщение "Проигрыш"
         2) promoCode = None
     """
 
-    # -----------------------------
-    # Определяем user_id
-    # -----------------------------
-    user_id = None
+    # ----------------------------------------
+    # 1. Определяем Telegram user_id (равен chat_id)
+    # ----------------------------------------
+    chat_id = None
 
-    # 1) initData через Telegram WebApp/Game API
+    # 1) initData через Telegram Game API
     if payload.initData:
         try:
-            user_id = security_service.validate_init_data(payload.initData)
+            chat_id = security_service.validate_init_data(payload.initData)
         except Exception:
             raise HTTPException(
                 status_code=400,
                 detail="Invalid Telegram initData signature"
             )
 
-    # 2) Если initData нет — fallback на telegramUserId
-    if user_id is None:
-        user_id = payload.telegramUserId or 0
+    # 2) fallback — если игра передаёт лишь telegramUserId
+    if chat_id is None:
+        chat_id = payload.telegramUserId or 0
 
-    # -----------------------------
-    # Ветка победы
-    # -----------------------------
+    # ----------------------------------------
+    # 2. Ветка победы
+    # ----------------------------------------
     if payload.outcome == "win":
-        promo = promo_service.create_promo_code(db=db, user_id=user_id)
+        promo = promo_service.create_promo_code(
+            db=db,
+            chat_id=chat_id,   # FIX HERE
+        )
 
         await telegram_service.send_win(
-            chat_id=user_id,
+            chat_id=chat_id,
             promo_code=promo.code
         )
 
@@ -95,10 +96,10 @@ async def game_result(
             promoCode=promo.code
         )
 
-    # -----------------------------
-    # Ветка проигрыша
-    # -----------------------------
-    await telegram_service.send_lose(chat_id=user_id)
+    # ----------------------------------------
+    # 3. Ветка проигрыша
+    # ----------------------------------------
+    await telegram_service.send_lose(chat_id=chat_id)
 
     return GameResultResponse(
         status="ok",

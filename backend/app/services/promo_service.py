@@ -19,12 +19,11 @@ class PromoService:
     def _generate_code() -> str:
         """
         Генерирует 5-значный код.
-        Пример: "02714", "98310"
         """
         num = random.randint(0, 10**PromoService.CODE_LENGTH - 1)
         return str(num).zfill(PromoService.CODE_LENGTH)
 
-    def create_promo_code(self, db: Session, user_id: int) -> PromoCode:
+    def create_promo_code(self, db: Session, chat_id: int) -> PromoCode:
         """
         Генерирует уникальный промокод и сохраняет его в БД.
         """
@@ -42,10 +41,10 @@ class PromoService:
             if exists:
                 continue
 
-            # Создаём объект
+            # Создаем объект промокода
             promo = PromoCode(
                 code=code,
-                user_id=user_id,
+                chat_id=chat_id,
             )
 
             db.add(promo)
@@ -54,6 +53,5 @@ class PromoService:
 
             return promo
 
-        # Если мы тут — что-то совсем странное (очень много коллизий)
+        # Если слишком много коллизий
         raise RuntimeError("Не удалось сгенерировать уникальный промокод")
-
