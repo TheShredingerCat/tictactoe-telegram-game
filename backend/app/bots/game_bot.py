@@ -77,7 +77,7 @@ def get_chat_id(user_id: int):
 # ---------------------------------------------------------
 # Запуск Telegram-бота
 # ---------------------------------------------------------
-def run_bot():
+async def run_bot():
     logger.info("Starting Telegram game bot...")
 
     app = (
@@ -91,4 +91,7 @@ def run_bot():
     app.add_handler(CommandHandler("play", start))
     app.add_handler(CallbackQueryHandler(handle_callback))
 
-    app.run_polling()
+    await app.initialize()
+    await app.start()
+    await app.updater.start_polling()
+
