@@ -8,6 +8,9 @@ from app.services.telegram_service import TelegramService
 from app.services.security_service import SecurityService
 from app.config import get_settings
 
+# Важно — импортируем chat_id, который бот сохраняет при /start
+from app.bots.game_bot import get_chat_id
+
 
 router = APIRouter()
 
@@ -17,12 +20,12 @@ security_service = SecurityService()
 settings = get_settings()
 
 
-# -----------------------------
+# --------------------------------------------------------
 # Pydantic схемы
-# -----------------------------
+# --------------------------------------------------------
 
 class GameResultRequest(BaseModel):
-    outcome: str  # "win" | "lose"
+    outcome: str            # "win" | "lose"
     telegramUserId: int | None = None
     initData: str | None = None
 
@@ -38,9 +41,9 @@ class GameResultResponse(BaseModel):
     promoCode: str | None = None
 
 
-# -----------------------------
+# --------------------------------------------------------
 # Endpoint
-# -----------------------------
+# --------------------------------------------------------
 
 @router.post("/game/result", response_model=GameResultResponse)
 async def game_result(
@@ -49,41 +52,53 @@ async def game_result(
 ):
     """
     При победе:
-        1) создаёт промокод (chat_id = user_id = id Telegram-пользователя)
-        2) отправляет сообщение "Победа! Промокод: XXX"
-        3) возвращает промокод на фронт
+        1) создаём промокод
+        2) отправляем сообщение "Победа! Промокод: XXX"
+        3) возвращаем промокод фронту
 
-    При поражении:
-        1) отправляет сообщение "Проигрыш"
+    При проигрыше:
+        1) отправляем сообщение "Проигрыш"
         2) promoCode = None
     """
 
-    # ----------------------------------------
-    # 1. Определяем Telegram user_id (равен chat_id)
-    # ----------------------------------------
-    chat_id = None
+    # ----------------------------------------------------
+    # 1. Определяем Telegram user_id (а значит, и chat_id)
+    # ----------------------------------------------------
+    user_id = None
 
-    # 1) initData через Telegram Game API
     if payload.initData:
         try:
-            chat_id = security_service.validate_init_data(payload.initData)
+            user_id = security_service.validate_init_data(payload.initData)
         except Exception:
             raise HTTPException(
                 status_code=400,
                 detail="Invalid Telegram initData signature"
             )
 
-    # 2) fallback — если игра передаёт лишь telegramUserId
-    if chat_id is None:
-        chat_id = payload.telegramUserId or 0
+    if user_id is None:
+        user_id = payload.telegramUserId or 0
 
-    # ----------------------------------------
-    # 2. Ветка победы
-    # ----------------------------------------
+    # ----------------------------------------------------
+    # 2. Получаем chat_id, сохранённый ботом при /start
+    # ----------------------------------------------------
+    chat_id = get_chat_id(user_id)
+
+    if not chat_id:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Cannot determine chat_id for user. "
+                "User must press /start in the Telegram bot first."
+            )
+        )
+
+    # ----------------------------------------------------
+    # 3. Ветка победы
+    # ----------------------------------------------------
     if payload.outcome == "win":
         promo = promo_service.create_promo_code(
             db=db,
-            chat_id=chat_id,   # FIX HERE
+            chat_id=chat_id
         )
 
         await telegram_service.send_win(
@@ -96,9 +111,9 @@ async def game_result(
             promoCode=promo.code
         )
 
-    # ----------------------------------------
-    # 3. Ветка проигрыша
-    # ----------------------------------------
+    # ----------------------------------------------------
+    # 4. Ветка проигрыша
+    # ----------------------------------------------------
     await telegram_service.send_lose(chat_id=chat_id)
 
     return GameResultResponse(
