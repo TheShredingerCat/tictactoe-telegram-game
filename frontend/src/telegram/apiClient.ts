@@ -15,9 +15,11 @@ export async function sendGameResult(
   try {
     const payload = {
       outcome,
-      telegramUserId: telegramContext.userId ?? null,
-      initData: window.Telegram?.WebApp?.initData ?? null,
+      telegramUserId: telegramContext.userId,
+      initData: null, // Для Telegram HTML5 Game ALWAYS null
     };
+
+    console.log("[apiClient] Sending payload:", payload);
 
     const response = await fetch(`${API_BASE}/api/game/result`, {
       method: "POST",
@@ -26,11 +28,17 @@ export async function sendGameResult(
     });
 
     if (!response.ok) {
-      console.error("[apiClient] Backend returned error", response.status);
+      console.error(
+        "[apiClient] Backend returned error",
+        response.status,
+        await response.text()
+      );
       return null;
     }
 
     const data: PromoResponse = await response.json();
+    console.log("[apiClient] Promo response:", data);
+
     return data.promoCode ?? null;
   } catch (err) {
     console.error("[apiClient] Failed to send game result", err);
