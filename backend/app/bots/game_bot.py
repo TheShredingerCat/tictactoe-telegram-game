@@ -39,7 +39,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton(
                 "▶️ Играть",
                 callback_game={},       # запускает HTML5 Game
-                callback_data="play"    # обязательно, иначе handler не сработает
             )
         ]
     ])
@@ -52,18 +51,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Срабатывает при нажатии "Играть".
-    Telegram требует вернуть URL игры через answer()
-    """
     query: CallbackQuery = update.callback_query
+
     user_id = query.from_user.id
     chat_id = query.message.chat.id
 
     ACTIVE_CHAT_IDS[user_id] = chat_id
     logger.info(f"[CALLBACK] PLAY pressed. Saved chat_id={chat_id} for user_id={user_id}")
 
-    # ОБЯЗАТЕЛЬНО — URL HTML5 игры
     await query.answer(url=settings.GAME_URL)
 
 
