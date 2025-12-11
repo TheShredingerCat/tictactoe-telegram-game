@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 settings = get_settings()
 
 # ⚠️ ДОЛЖНО СОВПАДАТЬ с GameShortName в BotFather → /mygames
-GAME_SHORT_NAME = "tictactoe"
+GAME_SHORT_NAME = "xo_tictactoy"
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
