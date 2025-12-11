@@ -1,5 +1,6 @@
 import random
 from sqlalchemy.orm import Session
+from app.bots.game_bot import get_chat_id
 
 from app.models.promo_code import PromoCode
 
