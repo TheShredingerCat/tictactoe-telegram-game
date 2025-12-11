@@ -29,8 +29,14 @@ function detectUserId() {
     for (const source of querySources) {
       if (!source) continue;
 
-      const queryIndex = source.indexOf("?");
-      const query = queryIndex >= 0 ? source.slice(queryIndex + 1) : source;
+      const withoutPrefix =
+        source.startsWith("?") || source.startsWith("#")
+          ? source.slice(1)
+          : source;
+
+      const queryIndex = withoutPrefix.indexOf("?");
+      const query =
+        queryIndex >= 0 ? withoutPrefix.slice(queryIndex + 1) : withoutPrefix;
       if (!query) continue;
 
       const params = new URLSearchParams(query);
