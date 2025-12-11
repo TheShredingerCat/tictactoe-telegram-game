@@ -62,8 +62,13 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     Telegram автоматически откроет Game URL.
     """
     query = update.callback_query
-    logger.info("User pressed PLAY, answering callback...")
-    await query.answer()
+
+    GAME_URL = "https://habitbattle.ru"
+
+    await query.answer(
+        url=GAME_URL,  # ОТКРЫВАЕМ ИГРУ
+        show_alert=False
+    )
 
 
 def create_bot_app() -> Application:
