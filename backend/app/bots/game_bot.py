@@ -20,8 +20,6 @@ settings = get_settings()
 # Short name должен совпадать с BotFather
 GAME_SHORT_NAME = "xo_tictactoy"
 
-GAME_URL=https://habitbattle.ru
-
 # Здесь храним chat_id для каждого user_id
 ACTIVE_CHAT_IDS = {}   # user_id → chat_id
 
@@ -61,7 +59,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ACTIVE_CHAT_IDS[user_id] = chat_id
     logger.info(f"[CALLBACK] PLAY pressed. Saved chat_id={chat_id} for user_id={user_id}")
 
-    await query.answer(url=settings.GAME_URL)
+    await query.answer(url="https://habitbattle.ru")
 
 
 # ---------------------------------------------------------
