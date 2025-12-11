@@ -31,7 +31,7 @@ function startNewGame() {
   isPlayerTurn = true;
   gameOver = false;
 
-  layout.setStatus("Your move");
+  layout.setStatus("Ваш ход");
   layout.showGameScreen();
   boardView.setEnabled(true);
   boardView.render(board);
@@ -48,7 +48,7 @@ function handlePlayerMove(index: number) {
   if (winner) return endGame(winner);
 
   isPlayerTurn = false;
-  layout.setStatus("Computer is thinking…");
+  layout.setStatus("Компьютер думает…");
 
   setTimeout(botTurn, 300);
 }
@@ -66,7 +66,7 @@ function botTurn() {
   if (winner) return endGame(winner);
 
   isPlayerTurn = true;
-  layout.setStatus("Your move");
+  layout.setStatus("Ваш ход");
 }
 
 async function endGame(winner: Winner) {
@@ -74,9 +74,9 @@ async function endGame(winner: Winner) {
   boardView.setEnabled(false);
 
   if (winner === PLAYER) {
-    layout.setStatus("You win!");
+    layout.setStatus("Вы победили!");
 
-    const promo = await sendGameResult("win");
+    const promo = await sendGameResult("Победа");
     const code = promo ?? "00000";
 
     winModal.show(code);
@@ -84,12 +84,12 @@ async function endGame(winner: Winner) {
   }
 
   if (winner === BOT) {
-    layout.setStatus("You lose");
+    layout.setStatus("Вы проиграли.");
 
-    await sendGameResult("lose");
+    await sendGameResult("Проигрыш");
     layout.showLoseScreen();
     return;
   }
 
-  layout.setStatus("Draw! Tap Play Again");
+  layout.setStatus("Ничья! Нажмите чтобы сыграть снова.");
 }
