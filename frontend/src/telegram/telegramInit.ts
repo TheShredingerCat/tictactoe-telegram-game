@@ -24,28 +24,12 @@ function detectUserId() {
     if (window.TelegramGameProxy?.initParams?.user?.id) {
       return window.TelegramGameProxy.initParams.user.id;
     }
-    // 3) fallback: user id from query parameter (?tg_user_id=123)
-    const querySources = [window.location.search, window.location.hash];
-    for (const source of querySources) {
-      if (!source) continue;
-
-      const withoutPrefix =
-        source.startsWith("?") || source.startsWith("#")
-          ? source.slice(1)
-          : source;
-
-      const queryIndex = withoutPrefix.indexOf("?");
-      const query =
-        queryIndex >= 0 ? withoutPrefix.slice(queryIndex + 1) : withoutPrefix;
-      if (!query) continue;
-
-      const params = new URLSearchParams(query);
-      const fromQuery = params.get("tg_user_id") ?? params.get("user_id");
-      if (fromQuery) {
-        const parsed = Number(fromQuery);
-        if (!Number.isNaN(parsed) && Number.isFinite(parsed)) {
-          return parsed;
-        }
+    // 3) fallback: look for tg_user_id anywhere in the URL (query or hash)
+    const match = window.location.href.match(/[?&#]tg_user_id=(\d+)/);
+    if (match) {
+      const parsed = Number(match[1]);
+      if (!Number.isNaN(parsed) && Number.isFinite(parsed)) {
+        return parsed;
       }
     }
 
