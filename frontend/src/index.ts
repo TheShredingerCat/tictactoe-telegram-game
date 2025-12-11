@@ -1,33 +1,21 @@
 import { Board, Winner } from "./core/types";
-import {
-  createEmptyBoard,
-  makeMove,
-  checkWinner,
-} from "./core/gameEngine";
-
+import { createEmptyBoard, makeMove, checkWinner } from "./core/gameEngine";
 import { PLAYER, BOT, chooseBotMove } from "./core/botAI";
 import { boardView } from "./ui/boardView";
 import { layout } from "./ui/layout";
-import { winScreen } from "./ui/modals";
+import { winModal } from "./ui/modals";
 import { sendGameResult } from "./telegram/apiClient";
 
-// STATE
 let board: Board = createEmptyBoard();
 let isPlayerTurn = true;
 let gameOver = false;
 
-// INIT
 function init() {
   boardView.initClickListeners();
 
-  boardView.onCellClick((index) => {
-    handlePlayerMove(index);
-  });
+  boardView.onCellClick((index) => handlePlayerMove(index));
 
-  document.getElementById("btn-reset")?.addEventListener("click", () => {
-    startNewGame();
-  });
-
+  document.getElementById("btn-reset")?.addEventListener("click", startNewGame);
   document.getElementById("btn-lose-again")?.addEventListener("click", () => {
     layout.showGameScreen();
     startNewGame();
@@ -38,7 +26,6 @@ function init() {
 
 init();
 
-// GAME
 function startNewGame() {
   board = createEmptyBoard();
   isPlayerTurn = true;
@@ -82,7 +69,6 @@ function botTurn() {
   layout.setStatus("Your move");
 }
 
-// END GAME
 async function endGame(winner: Winner) {
   gameOver = true;
   boardView.setEnabled(false);
@@ -93,7 +79,7 @@ async function endGame(winner: Winner) {
     const promo = await sendGameResult("win");
     const code = promo ?? "00000";
 
-    winScreen.show(code);
+    winModal.show(code);
     return;
   }
 
