@@ -1,11 +1,7 @@
 import { telegramContext } from "./telegramInit";
 import { GameOutcome, PromoResponse } from "../core/types";
 
-/**
- * Базовый URL API.
- * В продакшене заменяется nginx'ом или окружением.
- */
-const API_BASE = (window as any).API_BASE ?? "http://localhost:8000";
+const API_BASE = (window as any).API_BASE ?? "https://habitbattle.ru";
 
 /**
  * Отправка результата игры на backend.
@@ -19,7 +15,8 @@ export async function sendGameResult(
   try {
     const payload = {
       outcome,
-      telegramUserId: telegramContext.userId ?? 0, // backend обработает null как 0
+      telegramUserId: telegramContext.userId ?? null,
+      initData: window.Telegram?.WebApp?.initData ?? null,
     };
 
     const response = await fetch(`${API_BASE}/api/game/result`, {
@@ -33,13 +30,8 @@ export async function sendGameResult(
       return null;
     }
 
-    const data = (await response.json()) as PromoResponse;
-
-    if (data.promoCode) {
-      return data.promoCode;
-    }
-
-    return null;
+    const data: PromoResponse = await response.json();
+    return data.promoCode ?? null;
   } catch (err) {
     console.error("[apiClient] Failed to send game result", err);
     return null;
