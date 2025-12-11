@@ -28,6 +28,8 @@ settings = get_settings()
 # ⚠️ ДОЛЖНО СОВПАДАТЬ с GameShortName в BotFather → /mygames
 GAME_SHORT_NAME = "xo_tictactoy"
 
+active_games = {}
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
@@ -62,12 +64,14 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     Telegram автоматически откроет Game URL.
     """
     query = update.callback_query
+    user_id = query.from_user.id
+    chat_id = query.message.chat_id
 
-    GAME_URL = "https://habitbattle.ru"
+    # сохраняем пару user-chat по game instance
+    active_games[user_id] = chat_id
 
     await query.answer(
-        url=GAME_URL,  # ОТКРЫВАЕМ ИГРУ
-        show_alert=False
+        url="https://habitbattle.ru/?tg_user_id={}".format(user_id)
     )
 
 
