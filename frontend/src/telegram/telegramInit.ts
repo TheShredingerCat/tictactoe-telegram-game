@@ -7,12 +7,11 @@ export const telegramContext = {
 };
 
 const params = new URLSearchParams(window.location.search);
-
 const chatId = params.get("chat_id");
 
 if (chatId) {
   telegramContext.chatId = Number(chatId);
   console.log("[telegramInit] chat_id detected:", telegramContext.chatId);
 } else {
-  console.warn("[telegramInit] No chat_id found in URL");
+  console.warn("[telegramInit] No chat_id in URL");
 }

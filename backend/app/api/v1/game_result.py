@@ -7,8 +7,6 @@ from app.services.promo_service import PromoService
 from app.services.telegram_service import TelegramService
 from app.config import get_settings
 
-
-
 router = APIRouter()
 
 promo_service = PromoService()
@@ -16,19 +14,15 @@ telegram_service = TelegramService()
 settings = get_settings()
 
 
-# --------------------------
-# Pydantic модели
-# --------------------------
-
 class GameResultRequest(BaseModel):
     outcome: str
-    chatId: int | None = None   # <--- теперь принимаем chat_id напрямую
+    chat_id: int   # ТОЛЬКО chat_id
 
     @field_validator("outcome")
-    def validate_outcome(cls, value: str):
-        if value not in {"win", "lose"}:
+    def validate_outcome(cls, v):
+        if v not in ("win", "lose"):
             raise ValueError("outcome must be 'win' or 'lose'")
-        return value
+        return v
 
 
 class GameResultResponse(BaseModel):
@@ -36,43 +30,28 @@ class GameResultResponse(BaseModel):
     promoCode: str | None = None
 
 
-# --------------------------
-# Endpoint
-# --------------------------
-
 @router.post("/game/result", response_model=GameResultResponse)
-async def game_result(
-    payload: GameResultRequest,
-    db: Session = Depends(get_session),
-):
+async def game_result(payload: GameResultRequest, db: Session = Depends(get_session)):
     """
-    Результат игры. Работаем ТОЛЬКО через chat_id.
+    Обрабатываем победу или проигрыш, используя только chat_id.
     """
 
-    # 1. Проверяем chat_id
-    chat_id = payload.chatId
-
+    chat_id = payload.chat_id
     if not chat_id:
-        raise HTTPException(400, "chatId is required")
+        raise HTTPException(400, "chat_id is required")
 
-    # 2. Победа
+    # ---------- Победа ----------
     if payload.outcome == "win":
-        promo = promo_service.create_promo_code(
-            db=db,
-            chat_id=chat_id
-        )
+        promo = promo_service.create_promo_code(db=db, chat_id=chat_id)
 
-        await telegram_service.send_win(
-            chat_id=chat_id,
-            promo_code=promo.code
-        )
+        await telegram_service.send_win(chat_id=chat_id, promo_code=promo.code)
 
         return GameResultResponse(
             status="ok",
             promoCode=promo.code
         )
 
-    # 3. Поражение
+    # ---------- Проигрыш ----------
     await telegram_service.send_lose(chat_id=chat_id)
 
     return GameResultResponse(

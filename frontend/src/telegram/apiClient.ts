@@ -9,16 +9,14 @@ const API_BASE = (window as any).API_BASE ?? "https://habitbattle.ru";
  * outcome: "win" | "lose"
  * Возвращает промокод или null.
  */
-export async function sendGameResult(
-  outcome: GameOutcome
-): Promise<string | null> {
+export async function sendGameResult(outcome: GameOutcome): Promise<string | null> {
   try {
     const payload = {
       outcome,
-      chatId: telegramContext.chatId,
+      chat_id: telegramContext.chatId,  // ONLY chat_id
     };
 
-    console.log("[apiClient] Sending:", payload);
+    console.log("[apiClient] Sending payload:", payload);
 
     const response = await fetch(`${API_BASE}/api/game/result`, {
       method: "POST",
@@ -27,18 +25,13 @@ export async function sendGameResult(
     });
 
     if (!response.ok) {
-      console.error(
-        "[apiClient] Backend error",
-        response.status,
-        await response.text()
-      );
+      console.error("[apiClient] Backend error", response.status, await response.text());
       return null;
     }
 
-    const data: PromoResponse = await response.json();
-    console.log("[apiClient] Promo response:", data);
-
+    const data = await response.json();
     return data.promoCode ?? null;
+
   } catch (err) {
     console.error("[apiClient] Failed to send game result", err);
     return null;
