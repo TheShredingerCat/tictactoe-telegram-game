@@ -17,28 +17,24 @@ from app.config import get_settings
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
-# Short name должен совпадать с BotFather
 GAME_SHORT_NAME = "xo_tictactoy"
-
-# Здесь храним chat_id для каждого user_id
-ACTIVE_CHAT_IDS = {}   # user_id → chat_id
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
-    Отправляет кнопку игры пользователю.
+    Отправляем кнопку игры. В URL игры передаём chat_id.
     """
     chat_id = update.effective_chat.id
-    user_id = update.effective_user.id
 
-    ACTIVE_CHAT_IDS[user_id] = chat_id
-    logger.info(f"[START] Saved chat_id={chat_id} for user_id={user_id}")
+    logger.info(f"[START] chat_id={chat_id}")
+
+    game_url = f"https://habitbattle.ru/?chat_id={chat_id}"
 
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(
                 "▶️ Играть",
-                callback_game={},       # запускает HTML5 Game
+                callback_game={},  # запускает HTML5 Game
             )
         ]
     ])
@@ -51,27 +47,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Когда пользователь нажимает PLAY — открываем игру со своим chat_id.
+    """
     query: CallbackQuery = update.callback_query
-
-    user_id = query.from_user.id
     chat_id = query.message.chat.id
 
-    ACTIVE_CHAT_IDS[user_id] = chat_id
-    logger.info(f"[CALLBACK] PLAY pressed. Saved chat_id={chat_id} for user_id={user_id}")
+    logger.info(f"[CALLBACK] PLAY pressed — chat_id={chat_id}")
 
-    await query.answer(url="https://habitbattle.ru")
-
-
-# ---------------------------------------------------------
-# Для backend — получить chat_id по user_id
-# ---------------------------------------------------------
-def get_chat_id(user_id: int):
-    return ACTIVE_CHAT_IDS.get(user_id)
+    # Передаём chat_id в игру
+    await query.answer(url=f"https://habitbattle.ru/?chat_id={chat_id}")
 
 
-# ---------------------------------------------------------
-# Запуск Telegram-бота
-# ---------------------------------------------------------
 async def run_bot():
     logger.info("Starting Telegram game bot...")
 
@@ -89,4 +76,3 @@ async def run_bot():
     await app.initialize()
     await app.start()
     await app.updater.start_polling()
-

@@ -1,30 +1,18 @@
 ﻿/**
- * Telegram Game Platform init handler.
- *
- * Задача:
- *  - вытащить user_id из URL, который Telegram передаёт игре
- *  - сохранить в telegramContext
+ * Telegram Game Init — читаем chat_id из URL
  */
 
 export const telegramContext = {
-  userId: null as number | null,
+  chatId: null as number | null,
 };
-
-// Telegram Games передают параметры через URL вида:
-// https://habitbattle.ru/?user_id=337902079&game=xo
-// или иногда ?tgUserId=
 
 const params = new URLSearchParams(window.location.search);
 
-const tgUserId =
-  params.get("user_id") ||
-  params.get("tgUserId") ||
-  params.get("userid") ||
-  null;
+const chatId = params.get("chat_id");
 
-if (tgUserId) {
-  telegramContext.userId = Number(tgUserId);
-  console.log("[telegramInit] Telegram userId detected:", telegramContext.userId);
+if (chatId) {
+  telegramContext.chatId = Number(chatId);
+  console.log("[telegramInit] chat_id detected:", telegramContext.chatId);
 } else {
-  console.warn("[telegramInit] No Telegram userId found in URL");
+  console.warn("[telegramInit] No chat_id found in URL");
 }

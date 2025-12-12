@@ -1,7 +1,5 @@
 import random
 from sqlalchemy.orm import Session
-from app.bots.game_bot import get_chat_id
-
 from app.models.promo_code import PromoCode
 
 
@@ -14,7 +12,7 @@ class PromoService:
     """
 
     CODE_LENGTH = 5
-    MAX_ATTEMPTS = 20  # защита от бесконечного цикла
+    MAX_ATTEMPTS = 20
 
     @staticmethod
     def _generate_code() -> str:
@@ -37,13 +35,10 @@ class PromoService:
                 continue
 
             promo = PromoCode(code=code, chat_id=chat_id)
-
             db.add(promo)
             db.commit()
             db.refresh(promo)
 
             return promo
 
-        # Если слишком много коллизий
         raise RuntimeError("Не удалось сгенерировать уникальный промокод")
-

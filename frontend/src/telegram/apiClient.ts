@@ -15,11 +15,10 @@ export async function sendGameResult(
   try {
     const payload = {
       outcome,
-      telegramUserId: telegramContext.userId,
-      initData: null, // Для Telegram HTML5 Game ALWAYS null
+      chatId: telegramContext.chatId,
     };
 
-    console.log("[apiClient] Sending payload:", payload);
+    console.log("[apiClient] Sending:", payload);
 
     const response = await fetch(`${API_BASE}/api/game/result`, {
       method: "POST",
@@ -29,7 +28,7 @@ export async function sendGameResult(
 
     if (!response.ok) {
       console.error(
-        "[apiClient] Backend returned error",
+        "[apiClient] Backend error",
         response.status,
         await response.text()
       );
