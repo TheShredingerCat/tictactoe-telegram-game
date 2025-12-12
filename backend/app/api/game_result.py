@@ -7,7 +7,6 @@ from app.services.promo_service import PromoService
 from app.services.telegram_service import TelegramService
 from app.config import get_settings
 
-from app.bots.game_bot import get_chat_id  # user_id → chat_id mapping
 
 
 router = APIRouter()
