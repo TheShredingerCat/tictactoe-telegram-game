@@ -43,7 +43,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=chat_id,
         game_short_name=GAME_SHORT_NAME,
         reply_markup=keyboard,
+        start_parameter=str(chat_id)
     )
+
 
 
 async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -56,7 +58,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info(f"[CALLBACK] PLAY pressed — chat_id={chat_id}")
 
     # Передаём chat_id в игру
-    await query.answer(url=f"https://habitbattle.ru")
+    await query.answer(url=f"https://habitbattle.ru/?chat_id={chat_id}")
 
 
 async def run_bot():
