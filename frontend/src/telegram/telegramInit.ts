@@ -7,6 +7,7 @@ export const telegramContext = {
 };
 
 const params = new URLSearchParams(window.location.search);
+
 const chatId = params.get("chat_id");
 
 if (chatId) {
