@@ -76,7 +76,7 @@ async function endGame(winner: Winner) {
   if (winner === PLAYER) {
     layout.setStatus("Вы победили!");
 
-    const promo = await sendGameResult("Победа");
+    const promo = await sendGameResult("win");
     const code = promo ?? "00000";
 
     winModal.show(code);
@@ -86,7 +86,7 @@ async function endGame(winner: Winner) {
   if (winner === BOT) {
     layout.setStatus("Вы проиграли.");
 
-    await sendGameResult("Проигрыш");
+    await sendGameResult("lose");
     layout.showLoseScreen();
     return;
   }
