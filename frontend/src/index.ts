@@ -15,11 +15,24 @@ function init() {
 
   boardView.onCellClick((index) => handlePlayerMove(index));
 
-  document.getElementById("btn-reset")?.addEventListener("click", startNewGame);
-  document.getElementById("btn-lose-again")?.addEventListener("click", () => {
-    layout.showGameScreen();
-    startNewGame();
-  });
+  // Кнопка "Сыграть снова" на основном экране
+  document.getElementById("btn-reset")
+    ?.addEventListener("click", startNewGame);
+
+  // Кнопка "Сыграть снова" на экране проигрыша
+  document.getElementById("btn-lose-again")
+    ?.addEventListener("click", () => {
+      layout.showGameScreen();
+      startNewGame();
+    });
+
+  // Кнопка "Сыграть снова" в модалке победы
+  document.getElementById("promo-play-again")
+    ?.addEventListener("click", () => {
+      winModal.hide();
+      layout.showGameScreen();
+      startNewGame();
+    });
 
   startNewGame();
 }
