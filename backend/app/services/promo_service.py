@@ -32,21 +32,11 @@ class PromoService:
         for _ in range(self.MAX_ATTEMPTS):
             code = self._generate_code()
 
-            # Проверяем уникальность
-            exists = (
-                db.query(PromoCode)
-                .filter(PromoCode.code == code)
-                .first()
-            )
-
+            exists = db.query(PromoCode).filter(PromoCode.code == code).first()
             if exists:
                 continue
 
-            # Создаем объект промокода
-            promo = PromoCode(
-                code=code,
-                chat_id=chat_id,
-            )
+            promo = PromoCode(code=code, chat_id=chat_id)
 
             db.add(promo)
             db.commit()
@@ -56,3 +46,4 @@ class PromoService:
 
         # Если слишком много коллизий
         raise RuntimeError("Не удалось сгенерировать уникальный промокод")
+

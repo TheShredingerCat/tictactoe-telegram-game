@@ -50,14 +50,11 @@ async def game_result(
     # -------------------------------
     user_id = None
 
-    if payload.initData:
+    if payload.initData not in (None, "", "null"):
         try:
             user_id = security_service.validate_init_data(payload.initData)
         except Exception:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid Telegram initData signature"
-            )
+            raise HTTPException(400, "Invalid Telegram initData signature")
 
     if user_id is None:
         user_id = payload.telegramUserId or 0

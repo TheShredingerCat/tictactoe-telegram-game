@@ -21,4 +21,4 @@ class PromoCode(Base):
     used = Column(Boolean, default=False)
 
     def __repr__(self) -> str:
-        return f"<PromoCode id={self.id} code={self.code} user_id={self.user_id}>"
+        return f"<PromoCode id={self.id} code={self.code} chat_id={self.chat_id}>"
