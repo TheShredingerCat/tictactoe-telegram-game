@@ -56,7 +56,7 @@ async def handle_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info(f"[CALLBACK] PLAY pressed — chat_id={chat_id}")
 
     # Передаём chat_id в игру
-    await query.answer(url=f"https://habitbattle.ru/?chat_id={chat_id}")
+    await query.answer(url=f"https://habitbattle.ru")
 
 
 async def run_bot():
