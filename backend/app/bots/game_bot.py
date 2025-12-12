@@ -28,22 +28,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     logger.info(f"[START] chat_id={chat_id}")
 
-    game_url = f"https://habitbattle.ru/?chat_id={chat_id}"
-
-    keyboard = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(
-                "▶️ Играть",
-                callback_game={},  # запускает HTML5 Game
-            )
-        ]
-    ])
+    keyboard = InlineKeyboardMarkup([[
+        InlineKeyboardButton(
+            "▶️ Играть",
+            callback_game={},  # запускает HTML5 Game
+        )
+    ]])
 
     await context.bot.send_game(
         chat_id=chat_id,
         game_short_name=GAME_SHORT_NAME,
         reply_markup=keyboard,
-        start_parameter=str(chat_id)
     )
 
 
